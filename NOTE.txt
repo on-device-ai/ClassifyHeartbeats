@@ -1,0 +1,173 @@
+* Workstation OS   : Ubuntu 16.04.6 LTS (Xenial Xerus) 64-bit PC (AMD64) desktop
+* Microcontrollers : STM32F746 Discovery kit (using Mbed)
+
+0. Nvidia Driver 418
+   
+   Ref. https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
+
+   sudo add-apt-repository ppa:graphics-drivers/ppa
+
+   sudo apt update
+
+   sudo apt upgrade
+
+   ubuntu-drivers list
+
+   sudo apt install nvidia-418
+
+1. Install Anaconda Distribution
+
+   Src. : https://www.anaconda.com/distribution/
+
+   Anaconda3-2019.10-Linux-x86_64.sh 
+
+   bash ~/Downloads/Anaconda3-2019.10-Linux-x86_64.sh 
+
+     Do you accept the license terms? [yes|no]
+     [no] >>> yes
+
+     [/home/yilintung/anaconda3] >>> 
+
+     Do you wish the installer to initialize Anaconda3
+     by running conda init? [yes|no]
+     [no] >>> no
+
+     You have chosen to not have conda modify your shell scripts at all.
+     To activate conda's base environment in your current shell session:
+
+     eval "$(/home/yilintung/anaconda3/bin/conda shell.YOUR_SHELL_NAME hook)" 
+
+     To install conda's shell functions for easier access, first activate, then:
+
+     conda init
+
+     If you'd prefer that conda's base environment not be activated on startup, 
+       set the auto_activate_base parameter to false: 
+
+     conda config --set auto_activate_base false
+
+     Thank you for installing Anaconda3!
+
+2. Create Anaconda3.sh
+
+   gedit Anaconda3.sh
+
+     export LANG='UTC-8'
+     export LC_ALL='en_US.UTF-8'
+
+     eval "$(/home/yilintung/anaconda3/bin/conda shell.bash hook)"
+
+   chmod 0744 Anaconda3.sh
+
+3. Execute Anaconda3.sh
+
+   source Anaconda3.sh
+
+4. Create tensorflow virtual environment
+
+   conda create --name tensorflow python=3.7 anaconda
+
+5. Activate tensorflow virtual environment
+
+   conda activate tensorflow
+
+6. Downgrad NumPy 
+
+   conda install numpy=1.16.2
+
+7. Install TensorFlow 2.0
+
+   Ref. : https://zhuanlan.zhihu.com/p/71581533
+
+   pip install tensorflow-gpu
+
+   conda install cudnn=7.6.0
+   conda install cudatoolkit=10.0.130
+  
+8. Check TensorFlow GPU is work
+
+   Ref. : https://www.tensorflow.org/guide/gpu
+   Ref. : https://tf.wiki/zh/basic/installation.html
+   Ref. : https://forum.floydhub.com/t/what-is-this-error-solved/461
+
+   python
+
+     import tensorflow as tf
+
+     a = tf.constant([[1, 2], [3, 4]])
+     b = tf.constant([[5, 6], [7, 8]])
+     c = tf.matmul(a, b)
+
+     print(c)
+
+9. Install BioSPPy - Biosignal Processing in Python
+
+   Src. : https://github.com/PIA-Group/BioSPPy
+
+   pip install biosppy
+
+10. Install wfdb-python
+
+    Src. : https://github.com/MIT-LCP/wfdb-python
+
+    pip install wfdb
+
+11. Download MIT-BIH Arrhythmia Database
+
+    Src. : https://physionet.org/content/mitdb/1.0.0/
+
+12. Download TensorFlow source code
+
+    git clone https://github.com/tensorflow/tensorflow.git
+    
+13. Generate TensorFlow Lite for Microcontrollers Mbed project (hello_world) for STM32F746 Discovery kit 
+
+    cd tensorflow/
+
+    make -f tensorflow/lite/experimental/micro/tools/make/Makefile TARGET=mbed TAGS="CMSIS disco_f746ng" generate_hello_world_mbed_project
+
+13. Deactivate tensorflow virtual environment
+
+    conda deactivate
+    
+14. Create mbed virtual environment and activate it
+
+    conda create -n mbed python=2.7
+
+    conda activate mbed
+
+15. Setup Mbed
+
+    conda install git
+
+    conda install -c anaconda mercurial
+
+    Src. : https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+
+    tar jxvf ~/Downloads/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2 -C ~/Projects
+
+    pip install mbed-cli
+
+    mbed --version
+
+    mbed config -G GCC_ARM_PATH /home/yilintung/Projects/gcc-arm-none-eabi-8-2019-q3-update/bin
+
+    mbed config --list
+
+16. Setup hello_world Mbed project
+
+    mbed config root .
+
+    mbed deploy
+
+    python -c 'import fileinput, glob;
+      for filename in glob.glob("mbed-os/tools/profiles/*.json"):
+        for line in fileinput.input(filename, inplace=True):
+          print line.replace("\"-std=gnu++98\"","\"-std=c++11\", \"-fpermissive\"")'
+
+17. Build hello_world Mbed project
+
+    mbed compile -m DISCO_F746NG -t GCC_ARM
+
+    cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
+
