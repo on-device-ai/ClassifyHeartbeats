@@ -25,6 +25,8 @@ limitations under the License.
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/version.h"
 
+#define USE_QUANTIZED
+
 // Globals, used for compatibility with Arduino-style sketches.
 namespace {
 tflite::ErrorReporter* error_reporter = nullptr;
@@ -54,7 +56,7 @@ void setup() {
        
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-#ifdef USE_QUAMTOZED
+#ifdef USE_QUANTIZED
   model = tflite::GetModel(classify_heartbeats_cnn_quantized_tflite);
 #else
   model = tflite::GetModel(classify_heartbeats_cnn_tflite);
@@ -80,7 +82,9 @@ void setup() {
       tflite::BuiltinOperator_DEPTHWISE_CONV_2D,
       tflite::ops::micro::Register_DEPTHWISE_CONV_2D());
   micro_mutable_op_resolver.AddBuiltin(tflite::BuiltinOperator_CONV_2D,
-                                       tflite::ops::micro::Register_CONV_2D());
+                                       tflite::ops::micro::Register_CONV_2D(),
+                                       /* min_version */ 1,
+                                       /* max_version */ 2);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_MAX_POOL_2D,
       tflite::ops::micro::Register_MAX_POOL_2D());
@@ -89,7 +93,9 @@ void setup() {
       tflite::ops::micro::Register_RESHAPE());
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_FULLY_CONNECTED,
-      tflite::ops::micro::Register_FULLY_CONNECTED());
+      tflite::ops::micro::Register_FULLY_CONNECTED(),
+      /* min_version */ 1,
+      /* max_version */ 4);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_SOFTMAX,
       tflite::ops::micro::Register_SOFTMAX());
