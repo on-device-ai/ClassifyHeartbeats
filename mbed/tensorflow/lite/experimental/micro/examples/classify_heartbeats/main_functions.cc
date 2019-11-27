@@ -54,7 +54,7 @@ void setup() {
        
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-#ifdef USE_QUAMTOZED
+#ifdef USE_QUANTIZED
   model = tflite::GetModel(classify_heartbeats_cnn_quantized_tflite);
 #else
   model = tflite::GetModel(classify_heartbeats_cnn_tflite);
@@ -171,7 +171,7 @@ void loop() {
        break;
     }
   }
-  error_reporter->Report("Label is %d , preduction is %d (%f %f %f %f %f)",signal_count,argmax_index,
+  error_reporter->Report("Label is %d , prediction is %d (%f %f %f %f %f)",signal_count,argmax_index,
     output->data.f[0],output->data.f[1],output->data.f[2],output->data.f[3],output->data.f[4]);
 
   if(signal_count < 4) {
