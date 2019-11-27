@@ -177,7 +177,7 @@ void loop() {
        break;
     }
   }
-  error_reporter->Report("Label is %d , preduction is %d (%f %f %f %f %f)",signal_count,argmax_index,
+  error_reporter->Report("Label is %d , prediction is %d (%f %f %f %f %f)",signal_count,argmax_index,
     output->data.f[0],output->data.f[1],output->data.f[2],output->data.f[3],output->data.f[4]);
 
   if(signal_count < 4) {
