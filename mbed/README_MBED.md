@@ -37,7 +37,7 @@ over the file.
 ## Project Generation
 
 See
-[tensorflow/lite/experimental/micro](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/experimental/micro)
+[tensorflow/lite/micro](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/micro)
 for details on how projects like this can be generated from the main source
 tree.
 
