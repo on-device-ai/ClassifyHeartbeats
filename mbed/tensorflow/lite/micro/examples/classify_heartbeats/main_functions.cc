@@ -16,6 +16,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/examples/classify_heartbeats/main_functions.h"
 
 #include "tensorflow/lite/micro/examples/classify_heartbeats/classify_heartbeats_cnn.h"
+#include "tensorflow/lite/micro/examples/classify_heartbeats/classify_heartbeats_cnn_quantized.h"
 #include "tensorflow/lite/micro/examples/classify_heartbeats/heartbeats_signal.h"
 #include "tensorflow/lite/micro/kernels/all_ops_resolver.h"
 #include "tensorflow/lite/micro/kernels/micro_ops.h"
@@ -53,7 +54,11 @@ void setup() {
        
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
+#ifdef USE_QUANTIZED
+  model = tflite::GetModel(classify_heartbeats_cnn_quantized_tflite);
+#else
   model = tflite::GetModel(classify_heartbeats_cnn_tflite);
+#endif
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     error_reporter->Report(
         "Model provided is schema version %d not equal "
