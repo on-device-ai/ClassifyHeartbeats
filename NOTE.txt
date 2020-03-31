@@ -3,7 +3,7 @@
 
 0. Nvidia Driver 418
    
-   Ref. https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
+   Ref. : https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
 
    sudo add-apt-repository ppa:graphics-drivers/ppa
 
