@@ -221,3 +221,30 @@
 
     cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
 
+********** ClassifyHeartbeats **********
+
+(1) Downlaod ClassifyHeartbeats project
+
+    git clone https://github.com/on-device-ai/ClassifyHeartbeats.git
+
+(2) Setup classify_heartbeats Mbed project 
+
+    cd ClassifyHeartbeats/mbed/
+
+    mbed config root .
+
+    mbed deploy
+
+    python -c 'import fileinput, glob;
+      for filename in glob.glob("mbed-os/tools/profiles/*.json"):
+        for line in fileinput.input(filename, inplace=True):
+          print line.replace("\"-std=gnu++98\"","\"-std=c++11\", \"-fpermissive\"")'
+
+    cp ../../tensorflow/tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h  ./mbed-os/cmsis/TARGET_CORTEX_M/
+
+(3) Build classify_heartbeats Mbed project
+
+    mbed compile -m DISCO_F746NG -t GCC_ARM
+
+    cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
+
