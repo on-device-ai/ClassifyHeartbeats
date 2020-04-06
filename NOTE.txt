@@ -3,7 +3,7 @@
 
 0. Nvidia Driver 418
    
-   Ref. https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
+   Ref. : https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
 
    sudo add-apt-repository ppa:graphics-drivers/ppa
 
@@ -119,24 +119,64 @@
 12. Download TensorFlow source code
 
     git clone https://github.com/tensorflow/tensorflow.git
-    
-13. Generate TensorFlow Lite for Microcontrollers Mbed project (hello_world) for STM32F746 Discovery kit 
+
+13. Bug Fix : Modify tensorflow/tensorflow/lite/micro/examples/micro_speech/CMSIS/Makefile.inc
+
+    Ref. : https://github.com/tensorflow/tensorflow/pull/36444
+
+    # CMSIS_PREPROCESSOR_HDRS := \
+    #   tensorflow/lite/micro/examples/micro_speech/CMSIS/hanning.h \
+    #   tensorflow/lite/micro/examples/micro_speech/CMSIS/sin_1k.h \
+    #   third_party/CMSIS_ext/README.md \
+    #   third_party/CMSIS_ext/arm_cmplx_mag_squared_q10p6.h
+      CMSIS_PREPROCESSOR_HDRS := \
+        tensorflow/lite/micro/examples/micro_speech/CMSIS/hanning.h \
+        tensorflow/lite/micro/examples/micro_speech/CMSIS/sin_1k.h \
+        third_party/CMSIS_ext/README.md
+
+    # THIRD_PARTY_CC_SRCS += \
+    #   $(MAKEFILE_DIR)/downloads/CMSIS_ext/arm_cmplx_mag_squared_q10p6.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/BasicMathFunctions/arm_mult_q15.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_bitreversal.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_rfft_init_q15.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_rfft_q15.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_cfft_q15.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_cfft_radix4_q15.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_bitreversal2.S \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/CommonTables/arm_const_structs.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/StatisticsFunctions/arm_mean_q15.c \
+    #   $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/StatisticsFunctions/arm_max_q7.c
+      THIRD_PARTY_CC_SRCS += \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/BasicMathFunctions/arm_mult_q15.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_bitreversal.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_rfft_init_q15.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_rfft_q15.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_cfft_q15.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_cfft_radix4_q15.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/TransformFunctions/arm_bitreversal2.S \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/CommonTables/arm_const_structs.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/StatisticsFunctions/arm_mean_q15.c \
+        $(MAKEFILE_DIR)/downloads/cmsis/CMSIS/DSP/Source/StatisticsFunctions/arm_max_q7.c
+
+14. Generate TensorFlow Lite for Microcontrollers Mbed project (hello_world) for STM32F746 Discovery kit 
 
     cd tensorflow/
 
-    make -f tensorflow/lite/experimental/micro/tools/make/Makefile TARGET=mbed TAGS="CMSIS disco_f746ng" generate_hello_world_mbed_project
+    make -f tensorflow/lite/micro/tools/make/Makefile TARGET=mbed TAGS="CMSIS disco_f746ng" generate_hello_world_mbed_project
 
-13. Deactivate tensorflow virtual environment
+15. Deactivate tensorflow virtual environment
 
     conda deactivate
     
-14. Create mbed virtual environment and activate it
+16. Create mbed virtual environment and activate it
 
     conda create -n mbed python=2.7
 
     conda activate mbed
 
-15. Setup Mbed
+17. Setup Mbed
 
     conda install git
 
@@ -144,17 +184,19 @@
 
     Src. : https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 
-    tar jxvf ~/Downloads/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2 -C ~/Projects
+    tar jxvf ~/Downloads/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2 -C ~/Projects
 
     pip install mbed-cli
 
     mbed --version
 
-    mbed config -G GCC_ARM_PATH /home/yilintung/Projects/gcc-arm-none-eabi-8-2019-q3-update/bin
+    mbed config -G GCC_ARM_PATH /home/yilintung/Projects/gcc-arm-none-eabi-7-2018-q2-update/bin
 
     mbed config --list
 
-16. Setup hello_world Mbed project
+18. Setup hello_world Mbed project
+
+    cd tensorflow/lite/micro/tools/make/gen/mbed_cortex-m4/prj/hello_world/mbed
 
     mbed config root .
 
@@ -165,9 +207,88 @@
         for line in fileinput.input(filename, inplace=True):
           print line.replace("\"-std=gnu++98\"","\"-std=c++11\", \"-fpermissive\"")'
 
-17. Build hello_world Mbed project
+19. Bug fix : Update arm_math.h
+
+    cd -
+
+    cp tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h tensorflow/lite/micro/tools/make/gen/mbed_cortex-m4/prj/hello_world/mbed/mbed-os/cmsis/TARGET_CORTEX_M/
+
+    cd -
+
+20. Build hello_world Mbed project
 
     mbed compile -m DISCO_F746NG -t GCC_ARM
 
     cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
+
+$$$$$$$$$$ ClassifyHeartbeats $$$$$$$$$$
+
+(1) Activate tensorflow virtual environment
+
+    conda deactivate
+
+    conda activate tensorflow
+
+(2) Install TFLite Analyser
+
+    Src. : https://github.com/PeteBlackerThe3rd/tflite_analyser
+
+    git clone https://github.com/PeteBlackerThe3rd/tflite_analyser.git
+
+(3) Downlaod ClassifyHeartbeats project
+
+    git clone -b quantized_model https://github.com/on-device-ai/ClassifyHeartbeats.git
+
+(4) Run TFLite Analyser
+
+    cd tflite_analyser/
+
+    python tflite_analyser.py -a ../ClassifyHeartbeats/tensorflow/classify_heartbeats_cnn.tflite
+
+    python tflite_analyser.py -a ../ClassifyHeartbeats/tensorflow/classify_heartbeats_cnn_quantized.tflite
+
+    cd -
+
+    Result : ./tensorflow/classify_heartbeats_cnn.tflite.txt
+    Result : ./tensorflow/classify_heartbeats_cnn_quantized.tflite.txt
+
+(5) Install and run Netron
+
+    Src. : https://github.com/lutzroeder/netron
+
+    sudo snap install netron
+
+    netron
+
+    Result : classify_heartbeats_cnn.png
+    Result : classify_heartbeats_cnn_quantized.png
+    
+(6) Activate mbed virtual environment
+
+    conda deactivate
+
+    conda activate mbed
+
+(7) Setup classify_heartbeats Mbed project 
+
+    cd ClassifyHeartbeats/mbed/
+
+    mbed config root .
+
+    mbed deploy
+
+    python -c 'import fileinput, glob;
+      for filename in glob.glob("mbed-os/tools/profiles/*.json"):
+        for line in fileinput.input(filename, inplace=True):
+          print line.replace("\"-std=gnu++98\"","\"-std=c++11\", \"-fpermissive\"")'
+
+    cp ../../tensorflow/tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h  ./mbed-os/cmsis/TARGET_CORTEX_M/
+
+(8) Build classify_heartbeats Mbed project
+
+    mbed compile -m DISCO_F746NG -t GCC_ARM
+
+    cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
+
+    Result : RESULT.txt
 
