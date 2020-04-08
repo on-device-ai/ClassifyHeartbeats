@@ -80,14 +80,19 @@ void setup() {
   static tflite::MicroMutableOpResolver micro_mutable_op_resolver;
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_DEPTHWISE_CONV_2D,
-      tflite::ops::micro::Register_DEPTHWISE_CONV_2D());
-  micro_mutable_op_resolver.AddBuiltin(tflite::BuiltinOperator_CONV_2D,
-                                       tflite::ops::micro::Register_CONV_2D(),
-                                       /* min_version */ 1,
-                                       /* max_version */ 2);
+      tflite::ops::micro::Register_DEPTHWISE_CONV_2D(),
+      /* min_version */ 1,
+      /* max_version */ 3);
+  micro_mutable_op_resolver.AddBuiltin(
+      tflite::BuiltinOperator_CONV_2D,
+      tflite::ops::micro::Register_CONV_2D(),
+      /* min_version */ 1,
+      /* max_version */ 3);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_MAX_POOL_2D,
-      tflite::ops::micro::Register_MAX_POOL_2D());
+      tflite::ops::micro::Register_MAX_POOL_2D(),
+      /* min_version */ 1,
+      /* max_version */ 2);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_RESHAPE,
       tflite::ops::micro::Register_RESHAPE());
@@ -98,7 +103,17 @@ void setup() {
       /* max_version */ 4);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_SOFTMAX,
-      tflite::ops::micro::Register_SOFTMAX());
+      tflite::ops::micro::Register_SOFTMAX(),
+      /* min_version */ 1,
+      /* max_version */ 4);
+  micro_mutable_op_resolver.AddBuiltin(
+      tflite::BuiltinOperator_QUANTIZE,
+      tflite::ops::micro::Register_QUANTIZE());
+  micro_mutable_op_resolver.AddBuiltin(
+      tflite::BuiltinOperator_DEQUANTIZE,
+      tflite::ops::micro::Register_DEQUANTIZE(),
+      /* min_version */ 1,
+      /* max_version */ 2);
 
   // Build an interpreter to run the model with.
   static tflite::MicroInterpreter static_interpreter(

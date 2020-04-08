@@ -3,7 +3,7 @@
 
 0. Nvidia Driver 418
    
-   Ref. : https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
+   @Ref. : https://www.maketecheasier.com/install-nvidia-drivers-ubuntu/
 
    sudo add-apt-repository ppa:graphics-drivers/ppa
 
@@ -17,7 +17,7 @@
 
 1. Install Anaconda Distribution
 
-   Src. : https://www.anaconda.com/distribution/
+   @Src. : https://www.anaconda.com/distribution/
 
    Anaconda3-2019.10-Linux-x86_64.sh 
 
@@ -77,7 +77,7 @@
 
 7. Install TensorFlow 2.0
 
-   Ref. : https://zhuanlan.zhihu.com/p/71581533
+   @Ref. : https://zhuanlan.zhihu.com/p/71581533
 
    pip install tensorflow-gpu
 
@@ -102,7 +102,7 @@
 
 9. Install BioSPPy - Biosignal Processing in Python
 
-   Src. : https://github.com/PIA-Group/BioSPPy
+   @Src. : https://github.com/PIA-Group/BioSPPy
 
    pip install biosppy
 
@@ -114,7 +114,7 @@
 
 11. Download MIT-BIH Arrhythmia Database
 
-    Src. : https://physionet.org/content/mitdb/1.0.0/
+    @Src. : https://physionet.org/content/mitdb/1.0.0/
 
 12. Download TensorFlow source code
 
@@ -122,7 +122,7 @@
 
 13. Bug Fix : Modify tensorflow/tensorflow/lite/micro/examples/micro_speech/CMSIS/Makefile.inc
 
-    Ref. : https://github.com/tensorflow/tensorflow/pull/36444
+    @Ref. : https://github.com/tensorflow/tensorflow/pull/36444
 
     # CMSIS_PREPROCESSOR_HDRS := \
     #   tensorflow/lite/micro/examples/micro_speech/CMSIS/hanning.h \
@@ -221,7 +221,7 @@
 
     cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
 
-$$$$$$$$$$ ClassifyHeartbeats $$$$$$$$$$
+========== ClassifyHeartbeats ==========
 
 (1) Activate tensorflow virtual environment
 
@@ -231,7 +231,7 @@ $$$$$$$$$$ ClassifyHeartbeats $$$$$$$$$$
 
 (2) Install TFLite Analyser
 
-    Src. : https://github.com/PeteBlackerThe3rd/tflite_analyser
+    @Src. : https://github.com/PeteBlackerThe3rd/tflite_analyser
 
     git clone https://github.com/PeteBlackerThe3rd/tflite_analyser.git
 
@@ -249,8 +249,8 @@ $$$$$$$$$$ ClassifyHeartbeats $$$$$$$$$$
 
     cd -
 
-    Result : ./tensorflow/classify_heartbeats_cnn.tflite.txt
-    Result : ./tensorflow/classify_heartbeats_cnn_quantized.tflite.txt
+    @Result : ./tensorflow/classify_heartbeats_cnn.tflite.txt
+    @Result : ./tensorflow/classify_heartbeats_cnn_quantized.tflite.txt
 
 (5) Install and run Netron
 
@@ -260,9 +260,9 @@ $$$$$$$$$$ ClassifyHeartbeats $$$$$$$$$$
 
     netron
 
-    Result : classify_heartbeats_cnn.png
-    Result : classify_heartbeats_cnn_quantized.png
-    
+    @Result : classify_heartbeats_cnn.tflite.png
+    @Result : classify_heartbeats_cnn_quantized.tflite.png 
+
 (6) Activate mbed virtual environment
 
     conda deactivate
@@ -290,5 +290,5 @@ $$$$$$$$$$ ClassifyHeartbeats $$$$$$$$$$
 
     cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /media/yilintung/DIS_F746NG/
 
-    Result : RESULT.txt
+    @Result : RESULT.txt
 

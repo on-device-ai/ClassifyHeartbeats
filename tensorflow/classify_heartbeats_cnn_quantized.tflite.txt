@@ -5,100 +5,105 @@ Done.
 Analysing graph[0] - None
 
 Operation types used by graph 0:
-CONV_2D           version  2 (builtin)
-DEPTHWISE_CONV_2D version  1 (builtin)
-FULLY_CONNECTED   version  3 (builtin)
-MAX_POOL_2D       version  1 (builtin)
+CONV_2D           version  3 (builtin)
+DEPTHWISE_CONV_2D version  3 (builtin)
+FULLY_CONNECTED   version  4 (builtin)
+MAX_POOL_2D       version  2 (builtin)
 RESHAPE           version  1 (builtin)
-SOFTMAX           version  1 (builtin)
+SOFTMAX           version  2 (builtin)
+QUANTIZE          version  1 (builtin)
+DEQUANTIZE        version  2 (builtin)
 
 Weights Summary:
 
-18 Weight tensors, containing 19,829 weights, taking 24.7 Kilobytes
+18 Weight tensors, containing 19,829 weights, taking 19.7 Kilobytes
 
-            1,805    FLOAT32 weights taking 7.05 Kilobytes
-               24      INT32 weights taking 96 Bytes
-           18,000       INT8 weights taking 17.6 Kilobytes
+              114      INT32 weights taking 456 Bytes
+           19,715       INT8 weights taking 19.3 Kilobytes
 
 Weights Details                                   type     --- (shape) ---      size      
 ------------------------------------------------------------------------------------------
 model/conv1d/conv1d/ExpandDims/dim_0             INT32     (1, 4)          16 Bytes      
-model/conv1d/conv1d/ExpandDims_1                FLOAT32    (1, 1, 3, 5)    60 Bytes      
-model/conv1d/conv1d_bias                        FLOAT32    (5)             20 Bytes      
+model/conv1d/conv1d/ExpandDims_1                  INT8     (1, 1, 3, 5)    15 Bytes      
+model/conv1d/conv1d_bias                         INT32     (5)             20 Bytes      
 model/conv1d_1/conv1d/ExpandDims/dim_0           INT32     (1, 4)          16 Bytes      
-model/conv1d_1/conv1d/ExpandDims_1              FLOAT32    (10, 1, 4, 5)   800 Bytes     
-model/conv1d_1/conv1d_bias                      FLOAT32    (10)            40 Bytes      
+model/conv1d_1/conv1d/ExpandDims_1                INT8     (10, 1, 4, 5)   200 Bytes     
+model/conv1d_1/conv1d_bias                       INT32     (10)            40 Bytes      
 model/conv1d_2/conv1d/ExpandDims/dim_0           INT32     (1, 4)          16 Bytes      
-model/conv1d_2/conv1d/ExpandDims_1              FLOAT32    (20, 1, 4, 10)  3.12 Kilobytes
-model/conv1d_2/conv1d_bias                      FLOAT32    (20)            80 Bytes      
+model/conv1d_2/conv1d/ExpandDims_1                INT8     (20, 1, 4, 10)  800 Bytes     
+model/conv1d_2/conv1d_bias                       INT32     (20)            80 Bytes      
 model/dense/MatMul/ReadVariableOp/transpose       INT8     (30, 600)       17.6 Kilobytes
-model/dense/MatMul_bias                         FLOAT32    (30)            120 Bytes     
-model/dense_1/MatMul/ReadVariableOp/transpose   FLOAT32    (20, 30)        2.34 Kilobytes
-model/dense_1/MatMul_bias                       FLOAT32    (20)            80 Bytes      
-model/dense_2/MatMul/ReadVariableOp/transpose   FLOAT32    (5, 20)         400 Bytes     
-model/dense_2/MatMul_bias                       FLOAT32    (5)             20 Bytes      
+model/dense/MatMul_bias                          INT32     (30)            120 Bytes     
+model/dense_1/MatMul/ReadVariableOp/transpose     INT8     (20, 30)        600 Bytes     
+model/dense_1/MatMul_bias                        INT32     (20)            80 Bytes      
+model/dense_2/MatMul/ReadVariableOp/transpose     INT8     (5, 20)         100 Bytes     
+model/dense_2/MatMul_bias                        INT32     (5)             20 Bytes      
 model/max_pooling1d/ExpandDims/dim_0             INT32     (1, 4)          16 Bytes      
 model/max_pooling1d_1/ExpandDims/dim_0           INT32     (1, 4)          16 Bytes      
 model/max_pooling1d_2/ExpandDims/dim_0           INT32     (1, 4)          16 Bytes      
 
 Dynamic tensors requiring memory allocation.
 
-This model contains 16 operations.
+This model contains 18 operations.
 
-    Tensor Name               (Size Bytes)  [Generating Op]  [Final Use Op]
-model/conv1d/conv1d/ExpandDims    (      1040)       [   0]         [   1]
-model/conv1d_1/conv1d/ExpandDims  (      2580)       [   4]         [   5]
-model/conv1d_1/conv1d/Squeeze     (      5040)       [   5]         [   6]
-model/conv1d_2/conv1d/ExpandDims  (      2520)       [   8]         [   9]
-model/conv1d_2/conv1d/Squeeze     (      4800)       [   9]         [  10]
-model/dense_2/BiasAdd             (        20)       [  14]         [  15]
-model/max_pooling1d/ExpandDims    (      5160)       [   2]         [   3]
-model/max_pooling1d/MaxPool       (      2580)       [   3]         [   4]
-model/max_pooling1d_1/ExpandDims  (      5040)       [   6]         [   7]
-model/max_pooling1d_1/MaxPool     (      2520)       [   7]         [   8]
-model/max_pooling1d_2/ExpandDims  (      4800)       [  10]         [  11]
-model/max_pooling1d_2/MaxPool     (      2400)       [  11]         [  12]
-model/re_lu/Relu                  (      5160)       [   1]         [   2]
-model/re_lu_3/Relu                (       120)       [  12]         [  13]
-model/re_lu_4/Relu                (        80)       [  13]         [  14]
+    Tensor Name                         (Size Bytes)  [Generating Op]  [Final Use Op]
+Identity_int8                     (         5)       [  16]         [  17]
+input_1_int8                      (       260)       [   0]         [   1]
+model/conv1d/conv1d/ExpandDims    (       260)       [   1]         [   2]
+model/conv1d_1/conv1d/ExpandDims  (       645)       [   5]         [   6]
+model/conv1d_1/conv1d/Squeeze     (      1260)       [   6]         [   7]
+model/conv1d_2/conv1d/ExpandDims  (       630)       [   9]         [  10]
+model/conv1d_2/conv1d/Squeeze     (      1200)       [  10]         [  11]
+model/dense_2/BiasAdd             (         5)       [  15]         [  16]
+model/max_pooling1d/ExpandDims    (      1290)       [   3]         [   4]
+model/max_pooling1d/MaxPool       (       645)       [   4]         [   5]
+model/max_pooling1d_1/ExpandDims  (      1260)       [   7]         [   8]
+model/max_pooling1d_1/MaxPool     (       630)       [   8]         [   9]
+model/max_pooling1d_2/ExpandDims  (      1200)       [  11]         [  12]
+model/max_pooling1d_2/MaxPool     (       600)       [  12]         [  13]
+model/re_lu/Relu                  (      1290)       [   2]         [   3]
+model/re_lu_3/Relu                (        30)       [  13]         [  14]
+model/re_lu_4/Relu                (        20)       [  14]         [  15]
 
-Graph contains 35 tensors
+Graph contains 37 tensors
 
-[ToDo] (Output) shape[5] op_range (15-None : None) deps: 0
-[ToDo] (Input) shape[2,6,0] op_range (None-0 : None) deps: 1
-[ToDo] (Intermediate) shape[1] op_range (0-1 : 2) deps: 1
-[ToDo] (Intermediate) shape[4] op_range (None-0 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (None-1 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (None-1 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (4-5 : 2) deps: 1
-[ToDo] (Intermediate) shape[4] op_range (None-4 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (None-5 : None) deps: 1
-[ToDo] (Intermediate) shape[1,0] op_range (5-6 : 2) deps: 1
-[ToDo] (Intermediate) shape[1,0] op_range (None-5 : None) deps: 1
-[ToDo] (Intermediate) shape[1,0] op_range (8-9 : 2) deps: 1
-[ToDo] (Intermediate) shape[4] op_range (None-8 : None) deps: 1
-[ToDo] (Intermediate) shape[1,0] op_range (None-9 : None) deps: 1
-[ToDo] (Intermediate) shape[2,0] op_range (9-10 : 2) deps: 1
-[ToDo] (Intermediate) shape[2,0] op_range (None-9 : None) deps: 1
-[ToDo] (Intermediate) shape[6,0,0] op_range (None-12 : None) deps: 1
-[ToDo] (Intermediate) shape[3,0] op_range (None-12 : None) deps: 1
-[ToDo] (Intermediate) shape[3,0] op_range (None-13 : None) deps: 1
-[ToDo] (Intermediate) shape[2,0] op_range (None-13 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (14-15 : 2) deps: 1
-[ToDo] (Intermediate) shape[2,0] op_range (None-14 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (None-14 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (2-3 : 2) deps: 1
-[ToDo] (Intermediate) shape[4] op_range (None-2 : None) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (3-4 : 2) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (16-17 : 2) deps: 1
+[ToDo] (Intermediate) shape[2,6,0] op_range (0-1 : 2) deps: 1
+[ToDo] (Intermediate) shape[1] op_range (1-2 : 2) deps: 1
+[ToDo] (Intermediate) shape[4] op_range (None-1 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (None-2 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (None-2 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (5-6 : 2) deps: 1
+[ToDo] (Intermediate) shape[4] op_range (None-5 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (None-6 : None) deps: 1
 [ToDo] (Intermediate) shape[1,0] op_range (6-7 : 2) deps: 1
-[ToDo] (Intermediate) shape[4] op_range (None-6 : None) deps: 1
-[ToDo] (Intermediate) shape[1,0] op_range (7-8 : 2) deps: 1
+[ToDo] (Intermediate) shape[1,0] op_range (None-6 : None) deps: 1
+[ToDo] (Intermediate) shape[1,0] op_range (9-10 : 2) deps: 1
+[ToDo] (Intermediate) shape[4] op_range (None-9 : None) deps: 1
+[ToDo] (Intermediate) shape[1,0] op_range (None-10 : None) deps: 1
 [ToDo] (Intermediate) shape[2,0] op_range (10-11 : 2) deps: 1
-[ToDo] (Intermediate) shape[4] op_range (None-10 : None) deps: 1
+[ToDo] (Intermediate) shape[2,0] op_range (None-10 : None) deps: 1
+[ToDo] (Intermediate) shape[6,0,0] op_range (None-13 : None) deps: 1
+[ToDo] (Intermediate) shape[3,0] op_range (None-13 : None) deps: 1
+[ToDo] (Intermediate) shape[3,0] op_range (None-14 : None) deps: 1
+[ToDo] (Intermediate) shape[2,0] op_range (None-14 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (15-16 : 2) deps: 1
+[ToDo] (Intermediate) shape[2,0] op_range (None-15 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (None-15 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (3-4 : 2) deps: 1
+[ToDo] (Intermediate) shape[4] op_range (None-3 : None) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (4-5 : 2) deps: 1
+[ToDo] (Intermediate) shape[1,0] op_range (7-8 : 2) deps: 1
+[ToDo] (Intermediate) shape[4] op_range (None-7 : None) deps: 1
+[ToDo] (Intermediate) shape[1,0] op_range (8-9 : 2) deps: 1
 [ToDo] (Intermediate) shape[2,0] op_range (11-12 : 2) deps: 1
-[ToDo] (Intermediate) shape[5] op_range (1-2 : 2) deps: 1
-[ToDo] (Intermediate) shape[3,0] op_range (12-13 : 2) deps: 1
-[ToDo] (Intermediate) shape[2,0] op_range (13-14 : 2) deps: 1
+[ToDo] (Intermediate) shape[4] op_range (None-11 : None) deps: 1
+[ToDo] (Intermediate) shape[2,0] op_range (12-13 : 2) deps: 1
+[ToDo] (Intermediate) shape[5] op_range (2-3 : 2) deps: 1
+[ToDo] (Intermediate) shape[3,0] op_range (13-14 : 2) deps: 1
+[ToDo] (Intermediate) shape[2,0] op_range (14-15 : 2) deps: 1
+[ToDo] (Input) shape[2,6,0] op_range (None-0 : None) deps: 1
+[ToDo] (Output) shape[5] op_range (17-None : None) deps: 0
 
 Operations used by graph 0:
 TODO

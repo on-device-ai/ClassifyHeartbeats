@@ -2097,11 +2097,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_and_q15(
-    const q15_t * pSrcA,
-    const q15_t * pSrcB,
-    q15_t * pDst,
-    uint32_t blockSize);
+  void arm_and_u16(
+    const uint16_t * pSrcA,
+    const uint16_t * pSrcB,
+          uint16_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise AND of two fixed-point vectors.
@@ -2111,11 +2111,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_and_q31(
-    const q31_t * pSrcA,
-    const q31_t * pSrcB,
-    q31_t * pDst,
-    uint32_t blockSize);
+  void arm_and_u32(
+    const uint32_t * pSrcA,
+    const uint32_t * pSrcB,
+          uint32_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise AND of two fixed-point vectors.
@@ -2125,11 +2125,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_and_q7(
-    const q7_t * pSrcA,
-    const q7_t * pSrcB,
-    q7_t * pDst,
-    uint32_t blockSize);
+  void arm_and_u8(
+    const uint8_t * pSrcA,
+    const uint8_t * pSrcB,
+          uint8_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise OR of two fixed-point vectors.
@@ -2139,11 +2139,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_or_q15(
-    const q15_t * pSrcA,
-    const q15_t * pSrcB,
-    q15_t * pDst,
-    uint32_t blockSize);
+  void arm_or_u16(
+    const uint16_t * pSrcA,
+    const uint16_t * pSrcB,
+          uint16_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise OR of two fixed-point vectors.
@@ -2153,11 +2153,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_or_q31(
-    const q31_t * pSrcA,
-    const q31_t * pSrcB,
-    q31_t * pDst,
-    uint32_t blockSize);
+  void arm_or_u32(
+    const uint32_t * pSrcA,
+    const uint32_t * pSrcB,
+          uint32_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise OR of two fixed-point vectors.
@@ -2167,11 +2167,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_or_q7(
-    const q7_t * pSrcA,
-    const q7_t * pSrcB,
-    q7_t * pDst,
-    uint32_t blockSize);
+  void arm_or_u8(
+    const uint8_t * pSrcA,
+    const uint8_t * pSrcB,
+          uint8_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise NOT of a fixed-point vector.
@@ -2180,10 +2180,10 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_not_q15(
-    const q15_t * pSrc,
-          q15_t * pDst,
-    uint32_t blockSize);
+  void arm_not_u16(
+    const uint16_t * pSrc,
+          uint16_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise NOT of a fixed-point vector.
@@ -2192,10 +2192,10 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_not_q31(
-    const q31_t * pSrc,
-          q31_t * pDst,
-    uint32_t blockSize);
+  void arm_not_u32(
+    const uint32_t * pSrc,
+          uint32_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise NOT of a fixed-point vector.
@@ -2204,10 +2204,10 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_not_q7(
-    const q7_t * pSrc,
-          q7_t * pDst,
-    uint32_t blockSize);
+  void arm_not_u8(
+    const uint8_t * pSrc,
+          uint8_t * pDst,
+          uint32_t blockSize);
 
 /**
    * @brief         Compute the logical bitwise XOR of two fixed-point vectors.
@@ -2217,11 +2217,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_xor_q15(
-    const q15_t * pSrcA,
-    const q15_t * pSrcB,
-    q15_t * pDst,
-    uint32_t blockSize);
+  void arm_xor_u16(
+    const uint16_t * pSrcA,
+    const uint16_t * pSrcB,
+          uint16_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise XOR of two fixed-point vectors.
@@ -2231,11 +2231,11 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_xor_q31(
-    const q31_t * pSrcA,
-    const q31_t * pSrcB,
-    q31_t * pDst,
-    uint32_t blockSize);
+  void arm_xor_u32(
+    const uint32_t * pSrcA,
+    const uint32_t * pSrcB,
+          uint32_t * pDst,
+          uint32_t blockSize);
 
   /**
    * @brief         Compute the logical bitwise XOR of two fixed-point vectors.
@@ -2245,10 +2245,10 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in]     blockSize  number of samples in each vector
    * @return        none
    */
-  void arm_xor_q7(
-    const q7_t * pSrcA,
-    const q7_t * pSrcB,
-    q7_t * pDst,
+  void arm_xor_u8(
+    const uint8_t * pSrcA,
+    const uint8_t * pSrcB,
+          uint8_t * pDst,
     uint32_t blockSize);
 
   /**
@@ -2357,39 +2357,44 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    */
   typedef struct
   {
-    uint32_t n_x;              /**< Number of known data points */
     arm_spline_type type;      /**< Type (boundary conditions) */
-    float32_t * buffer;
+    const float32_t * x;       /**< x values */
+    const float32_t * y;       /**< y values */
+    uint32_t n_x;              /**< Number of known data points */
+    float32_t * coeffs;        /**< Coefficients buffer (b,c, and d) */
   } arm_spline_instance_f32;
 
   /**
    * @brief Processing function for the floating-point cubic spline interpolation.
    * @param[in]  S          points to an instance of the floating-point spline structure.
-   * @param[in]  x          points to the x values of the known data points.
-   * @param[in]  y          points to the y values of the known data points.
    * @param[in]  xq         points to the x values ot the interpolated data points.
    * @param[out] pDst       points to the block of output data.
    * @param[in]  blockSize  number of samples of output data.
    */
   void arm_spline_f32(
-          arm_spline_instance_f32 * S,
-    const float32_t * x,
-    const float32_t * y,
-    const float32_t * xq,
-          float32_t * pDst,
-          uint32_t blockSize);
+        arm_spline_instance_f32 * S, 
+  const float32_t * xq,
+        float32_t * pDst,
+        uint32_t blockSize);
 
   /**
    * @brief Initialization function for the floating-point cubic spline interpolation.
    * @param[in,out] S        points to an instance of the floating-point spline structure.
-   * @param[in]     n        number of known data points.
    * @param[in]     type     type of cubic spline interpolation (boundary conditions)
+   * @param[in]     x        points to the x values of the known data points.
+   * @param[in]     y        points to the y values of the known data points.
+   * @param[in]     n        number of known data points.
+   * @param[in]     coeffs   coefficients array for b, c, and d
+   * @param[in]     tempBuffer   buffer array for internal computations
    */
   void arm_spline_init_f32(
-    arm_spline_instance_f32 * S,
-    uint32_t n,
-    arm_spline_type type,
-    float32_t * buffer);
+          arm_spline_instance_f32 * S,
+          arm_spline_type type,
+    const float32_t * x,
+    const float32_t * y,
+          uint32_t n, 
+          float32_t * coeffs,
+          float32_t * tempBuffer);
 
   /**
    * @brief Instance structure for the floating-point matrix structure.
@@ -3309,21 +3314,6 @@ arm_status arm_rfft_fast_init_f64 (
          arm_rfft_fast_instance_f64 * S,
          uint16_t fftLen);
 
-arm_status arm_rfft_32_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_64_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_128_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_256_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_512_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_1024_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_2048_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
-
-arm_status arm_rfft_4096_fast_init_f64 ( arm_rfft_fast_instance_f64 * S );
 
 void arm_rfft_fast_f64(
     arm_rfft_fast_instance_f64 * S,
@@ -3345,25 +3335,9 @@ arm_status arm_rfft_fast_init_f32 (
          arm_rfft_fast_instance_f32 * S,
          uint16_t fftLen);
 
-arm_status arm_rfft_32_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_64_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_128_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_256_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_512_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_1024_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_2048_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_4096_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
 
   void arm_rfft_fast_f32(
-        arm_rfft_fast_instance_f32 * S,
+        const arm_rfft_fast_instance_f32 * S,
         float32_t * p, float32_t * pOut,
         uint8_t ifftFlag);
 
@@ -8192,6 +8166,19 @@ float32_t arm_entropy_f32(const float32_t * pSrcA,uint32_t blockSize);
 
 
 /**
+ * @brief Entropy
+ *
+ * @param[in]  pSrcA        Array of input values.
+ * @param[in]  blockSize    Number of samples in the input array.
+ * @return     Entropy      -Sum(p ln p)
+ *
+ */
+
+
+float64_t arm_entropy_f64(const float64_t * pSrcA, uint32_t blockSize);
+
+
+/**
  * @brief Kullback-Leibler
  *
  * @param[in]  pSrcA         Pointer to an array of input values for probability distribution A.
@@ -8203,6 +8190,20 @@ float32_t arm_entropy_f32(const float32_t * pSrcA,uint32_t blockSize);
 float32_t arm_kullback_leibler_f32(const float32_t * pSrcA
   ,const float32_t * pSrcB
   ,uint32_t blockSize);
+
+
+/**
+ * @brief Kullback-Leibler
+ *
+ * @param[in]  pSrcA         Pointer to an array of input values for probability distribution A.
+ * @param[in]  pSrcB         Pointer to an array of input values for probability distribution B.
+ * @param[in]  blockSize     Number of samples in the input array.
+ * @return Kullback-Leibler  Divergence D(A || B)
+ *
+ */
+float64_t arm_kullback_leibler_f64(const float64_t * pSrcA, 
+                const float64_t * pSrcB, 
+                uint32_t blockSize);
 
 
 /**
@@ -8555,13 +8556,13 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (xIndex < 0 || xIndex > (S->numRows - 1) || yIndex < 0 || yIndex > (S->numCols - 1))
+    if (xIndex < 0 || xIndex > (S->numCols - 2) || yIndex < 0 || yIndex > (S->numRows - 2))
     {
       return (0);
     }
 
     /* Calculation of index for two nearest points in X-direction */
-    index = (xIndex - 1) + (yIndex - 1) * S->numCols;
+    index = (xIndex ) + (yIndex ) * S->numCols;
 
 
     /* Read two nearest points in X-direction */
@@ -8569,7 +8570,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
     f01 = pData[index + 1];
 
     /* Calculation of index for two nearest points in Y-direction */
-    index = (xIndex - 1) + (yIndex) * S->numCols;
+    index = (xIndex ) + (yIndex+1) * S->numCols;
 
 
     /* Read two nearest points in Y-direction */
@@ -8628,7 +8629,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+    if (rI < 0 || rI > (S->numCols - 2) || cI < 0 || cI > (S->numRows - 2))
     {
       return (0);
     }
@@ -8702,7 +8703,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+    if (rI < 0 || rI > (S->numCols - 2) || cI < 0 || cI > (S->numRows - 2))
     {
       return (0);
     }
@@ -8727,15 +8728,15 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* x1 is in 1.15(q15), xfract in 12.20 format and out is in 13.35 format */
     /* convert 13.35 to 13.31 by right shifting  and out is in 1.31 */
-    out = (q31_t) (((q63_t) x1 * (0xFFFFF - xfract)) >> 4U);
-    acc = ((q63_t) out * (0xFFFFF - yfract));
+    out = (q31_t) (((q63_t) x1 * (0x0FFFFF - xfract)) >> 4U);
+    acc = ((q63_t) out * (0x0FFFFF - yfract));
 
     /* x2 * (xfract) * (1-yfract)  in 1.51 and adding to acc */
-    out = (q31_t) (((q63_t) x2 * (0xFFFFF - yfract)) >> 4U);
+    out = (q31_t) (((q63_t) x2 * (0x0FFFFF - yfract)) >> 4U);
     acc += ((q63_t) out * (xfract));
 
     /* y1 * (1 - xfract) * (yfract)  in 1.51 and adding to acc */
-    out = (q31_t) (((q63_t) y1 * (0xFFFFF - xfract)) >> 4U);
+    out = (q31_t) (((q63_t) y1 * (0x0FFFFF - xfract)) >> 4U);
     acc += ((q63_t) out * (yfract));
 
     /* y2 * (xfract) * (yfract)  in 1.51 and adding to acc */
@@ -8780,7 +8781,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+    if (rI < 0 || rI > (S->numCols - 2) || cI < 0 || cI > (S->numRows - 2))
     {
       return (0);
     }
