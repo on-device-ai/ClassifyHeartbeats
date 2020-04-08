@@ -86,9 +86,9 @@
   
 8. Check TensorFlow GPU is work
 
-   Ref. : https://www.tensorflow.org/guide/gpu
-   Ref. : https://tf.wiki/zh/basic/installation.html
-   Ref. : https://forum.floydhub.com/t/what-is-this-error-solved/461
+   @Ref. : https://www.tensorflow.org/guide/gpu
+   @Ref. : https://tf.wiki/zh/basic/installation.html
+   @Ref. : https://forum.floydhub.com/t/what-is-this-error-solved/461
 
    python
 
@@ -108,7 +108,7 @@
 
 10. Install wfdb-python
 
-    Src. : https://github.com/MIT-LCP/wfdb-python
+    @Src. : https://github.com/MIT-LCP/wfdb-python
 
     pip install wfdb
 
@@ -182,7 +182,7 @@
 
     conda install -c anaconda mercurial
 
-    Src. : https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+    @Src. : https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 
     tar jxvf ~/Downloads/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2 -C ~/Projects
 
@@ -254,7 +254,7 @@
 
 (5) Install and run Netron
 
-    Src. : https://github.com/lutzroeder/netron
+    @Src. : https://github.com/lutzroeder/netron
 
     sudo snap install netron
 
