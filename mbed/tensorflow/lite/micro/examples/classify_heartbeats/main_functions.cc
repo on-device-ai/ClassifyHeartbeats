@@ -16,6 +16,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/examples/classify_heartbeats/main_functions.h"
 
 #include "tensorflow/lite/micro/examples/classify_heartbeats/classify_heartbeats_cnn.h"
+#include "tensorflow/lite/micro/examples/classify_heartbeats/classify_heartbeats_cnn_quantized.h"
 #include "tensorflow/lite/micro/examples/classify_heartbeats/heartbeats_signal.h"
 #include "tensorflow/lite/micro/kernels/all_ops_resolver.h"
 #include "tensorflow/lite/micro/kernels/micro_ops.h"
@@ -23,6 +24,8 @@ limitations under the License.
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/version.h"
+
+#define USE_QUANTIZED
 
 // Globals, used for compatibility with Arduino-style sketches.
 namespace {
@@ -53,7 +56,11 @@ void setup() {
        
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
+#ifdef USE_QUANTIZED
+  model = tflite::GetModel(classify_heartbeats_cnn_quantized_tflite);
+#else
   model = tflite::GetModel(classify_heartbeats_cnn_tflite);
+#endif
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     error_reporter->Report(
         "Model provided is schema version %d not equal "
@@ -73,21 +80,40 @@ void setup() {
   static tflite::MicroMutableOpResolver micro_mutable_op_resolver;
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_DEPTHWISE_CONV_2D,
-      tflite::ops::micro::Register_DEPTHWISE_CONV_2D());
-  micro_mutable_op_resolver.AddBuiltin(tflite::BuiltinOperator_CONV_2D,
-                                       tflite::ops::micro::Register_CONV_2D());
+      tflite::ops::micro::Register_DEPTHWISE_CONV_2D(),
+      /* min_version */ 1,
+      /* max_version */ 3);
+  micro_mutable_op_resolver.AddBuiltin(
+      tflite::BuiltinOperator_CONV_2D,
+      tflite::ops::micro::Register_CONV_2D(),
+      /* min_version */ 1,
+      /* max_version */ 3);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_MAX_POOL_2D,
-      tflite::ops::micro::Register_MAX_POOL_2D());
+      tflite::ops::micro::Register_MAX_POOL_2D(),
+      /* min_version */ 1,
+      /* max_version */ 2);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_RESHAPE,
       tflite::ops::micro::Register_RESHAPE());
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_FULLY_CONNECTED,
-      tflite::ops::micro::Register_FULLY_CONNECTED());
+      tflite::ops::micro::Register_FULLY_CONNECTED(),
+      /* min_version */ 1,
+      /* max_version */ 4);
   micro_mutable_op_resolver.AddBuiltin(
       tflite::BuiltinOperator_SOFTMAX,
-      tflite::ops::micro::Register_SOFTMAX());
+      tflite::ops::micro::Register_SOFTMAX(),
+      /* min_version */ 1,
+      /* max_version */ 4);
+  micro_mutable_op_resolver.AddBuiltin(
+      tflite::BuiltinOperator_QUANTIZE,
+      tflite::ops::micro::Register_QUANTIZE());
+  micro_mutable_op_resolver.AddBuiltin(
+      tflite::BuiltinOperator_DEQUANTIZE,
+      tflite::ops::micro::Register_DEQUANTIZE(),
+      /* min_version */ 1,
+      /* max_version */ 2);
 
   // Build an interpreter to run the model with.
   static tflite::MicroInterpreter static_interpreter(

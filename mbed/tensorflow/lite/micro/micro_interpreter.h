@@ -25,6 +25,39 @@ limitations under the License.
 
 namespace tflite {
 
+namespace internal {
+
+// A helper class to encapsulate the implementation of APIs in Context.
+// context->impl_ points to an instance of this class.
+// Check tensorflow/lite/c/common.h for detailed descriptions.
+class ContextHelper {
+ public:
+  explicit ContextHelper(ErrorReporter* error_reporter,
+                         MicroAllocator* allocator)
+      : allocator_(allocator), error_reporter_(error_reporter) {}
+
+  static TfLiteStatus AllocatePersistentBuffer(TfLiteContext* ctx, size_t bytes,
+                                               void** ptr);
+
+  static TfLiteStatus RequestScratchBufferInArena(TfLiteContext* ctx,
+                                                  size_t bytes,
+                                                  int* buffer_idx);
+
+  static void* GetScratchBuffer(TfLiteContext* ctx, int buffer_idx);
+
+  static void ReportOpError(struct TfLiteContext* context, const char* format,
+                            ...);
+
+  void SetNodeIndex(int idx) { current_node_idx_ = idx; }
+
+ private:
+  MicroAllocator* allocator_;
+  ErrorReporter* error_reporter_;
+  int current_node_idx_ = -1;
+};
+
+}  // namespace internal
+
 class MicroInterpreter {
  public:
   // The lifetime of the model, op resolver, tensor arena, and error reporter
@@ -39,22 +72,15 @@ class MicroInterpreter {
                    uint8_t* tensor_arena, size_t tensor_arena_size,
                    ErrorReporter* error_reporter);
 
-  // Specify a particular tensor as pre-allocated.  This means that this tensor
-  // will internally point to the supplied buffer, and no new memory will be
-  // provided.  The buffer must live at least as long as the allocator, since
-  // the buffer will be used every time an op is invoked which uses the
-  // specified tensor.  Most commonly this is useful when a platform-provided
-  // DMA buffer is used as an input, and it is desirable to avoid unnecessarily
-  // allocating a new buffer and copying from the DMA buffer. The user must
-  // ensure the buffer is valid throughout each interpreter run, and is not
-  // prematurely overwritten.
-  TfLiteStatus RegisterPreallocatedInput(uint8_t* buffer, size_t input_index);
+  ~MicroInterpreter();
 
-  // Run through the model and allocate all necessary input, output and
-  // intermediate tensors except for those already provided via calls to
-  // registerPreallocatedInput.
+  // Runs through the model and allocates all necessary input, output and
+  // intermediate tensors.
   TfLiteStatus AllocateTensors();
 
+  // In order to support partial graph runs for strided models, this can return
+  // values other than kTfLiteOk and kTfLiteError.
+  // TODO(b/149795762): Add this to the TfLiteStatus enum.
   TfLiteStatus Invoke();
 
   size_t tensors_size() const { return context_.tensors_size; }
@@ -101,12 +127,17 @@ class MicroInterpreter {
     return nullptr;
   }
 
+  // Reset all variable tensors to the default value.
+  TfLiteStatus ResetVariableTensors();
+
   TfLiteStatus initialization_status() const { return initialization_status_; }
 
-  ErrorReporter* error_reporter() { return error_reporter_; }
-
   size_t operators_size() const { return operators_->size(); }
-  struct pairTfLiteNodeAndRegistration node_and_registration(int node_index);
+
+  // For debugging only.
+  const NodeAndRegistration node_and_registration(int node_index) const {
+    return node_and_registrations_[node_index];
+  }
 
  private:
   void CorrectTensorEndianness(TfLiteTensor* tensorCorr);
@@ -114,7 +145,7 @@ class MicroInterpreter {
   template <class T>
   void CorrectTensorDataEndianness(T* data, int32_t size);
 
-  NodeAndRegistration* node_and_registrations_;
+  NodeAndRegistration* node_and_registrations_ = nullptr;
 
   const Model* model_;
   const OpResolver& op_resolver_;
@@ -128,6 +159,7 @@ class MicroInterpreter {
   const flatbuffers::Vector<flatbuffers::Offset<Operator>>* operators_;
 
   const SubGraph* subgraph_;
+  internal::ContextHelper context_helper_;
 };
 
 }  // namespace tflite

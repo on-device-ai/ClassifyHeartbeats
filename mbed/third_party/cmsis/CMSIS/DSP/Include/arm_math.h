@@ -93,8 +93,10 @@
    * Toolchain Support
    * ------------
    *
-   * The library has been developed and tested with MDK version 5.14.0.0
-   * The library is being tested in GCC and IAR toolchains and updates on this activity will be made available shortly.
+   * The library is now tested on Fast Models building with cmake.
+   * Core M0, M7, A5 are tested.
+   * 
+   * 
    *
    * Building the Library
    * ------------
@@ -139,6 +141,23 @@
    * Define macro ARM_MATH_NEON_EXPERIMENTAL to enable experimental Neon versions of 
    * of some DSP functions. Experimental Neon versions currently do not have better
    * performances than the scalar versions.
+   *
+   * - ARM_MATH_HELIUM:
+   *
+   * It implies the flags ARM_MATH_MVEF and ARM_MATH_MVEI and ARM_MATH_FLOAT16.
+   *
+   * - ARM_MATH_MVEF:
+   *
+   * Select Helium versions of the f32 algorithms.
+   * It implies ARM_MATH_FLOAT16 and ARM_MATH_MVEI.
+   *
+   * - ARM_MATH_MVEI:
+   *
+   * Select Helium versions of the int and fixed point algorithms.
+   *
+   * - ARM_MATH_FLOAT16:
+   *
+   * Float16 implementations of some algorithms (Requires MVE extension).
    *
    * <hr>
    * CMSIS-DSP in ARM::CMSIS Pack
@@ -383,47 +402,47 @@ extern "C"
 #include <limits.h>
 
 
-#define F64_MAX   DBL_MAX
-#define F32_MAX   FLT_MAX
+#define F64_MAX   ((float64_t)DBL_MAX)
+#define F32_MAX   ((float32_t)FLT_MAX)
 
 #if defined(ARM_MATH_FLOAT16)
-#define F16_MAX   (float16_t)FLT_MAX
+#define F16_MAX   ((float16_t)FLT_MAX)
 #endif
 
-#define F64_MIN   -DBL_MAX
-#define F32_MIN   -FLT_MAX
+#define F64_MIN   (-DBL_MAX)
+#define F32_MIN   (-FLT_MAX)
 
 #if defined(ARM_MATH_FLOAT16)
-#define F16_MIN   -(float16_t)FLT_MAX
+#define F16_MIN   (-(float16_t)FLT_MAX)
 #endif
 
-#define F64_ABSMAX   DBL_MAX
-#define F32_ABSMAX   FLT_MAX
+#define F64_ABSMAX   ((float64_t)DBL_MAX)
+#define F32_ABSMAX   ((float32_t)FLT_MAX)
 
 #if defined(ARM_MATH_FLOAT16)
-#define F16_ABSMAX   (float16_t)FLT_MAX
+#define F16_ABSMAX   ((float16_t)FLT_MAX)
 #endif
 
-#define F64_ABSMIN   (float64_t)0.0
-#define F32_ABSMIN   (float32_t)0.0
+#define F64_ABSMIN   ((float64_t)0.0)
+#define F32_ABSMIN   ((float32_t)0.0)
 
 #if defined(ARM_MATH_FLOAT16)
-#define F16_ABSMIN   (float16_t)0.0
+#define F16_ABSMIN   ((float16_t)0.0)
 #endif
 
-#define Q31_MAX   (0x7FFFFFFFL)
-#define Q15_MAX   (0x7FFF)
-#define Q7_MAX    (0x7F)
-#define Q31_MIN   (0x80000000L)
-#define Q15_MIN   (0x8000)
-#define Q7_MIN    (0x80)
+#define Q31_MAX   ((q31_t)(0x7FFFFFFFL))
+#define Q15_MAX   ((q15_t)(0x7FFF))
+#define Q7_MAX    ((q7_t)(0x7F))
+#define Q31_MIN   ((q31_t)(0x80000000L))
+#define Q15_MIN   ((q15_t)(0x8000))
+#define Q7_MIN    ((q7_t)(0x80))
 
-#define Q31_ABSMAX   (0x7FFFFFFFL)
-#define Q15_ABSMAX   (0x7FFF)
-#define Q7_ABSMAX    (0x7F)
-#define Q31_ABSMIN   0
-#define Q15_ABSMIN   0
-#define Q7_ABSMIN    0
+#define Q31_ABSMAX   ((q31_t)(0x7FFFFFFFL))
+#define Q15_ABSMAX   ((q15_t)(0x7FFF))
+#define Q7_ABSMAX    ((q7_t)(0x7F))
+#define Q31_ABSMIN   ((q31_t)0)
+#define Q15_ABSMIN   ((q15_t)0)
+#define Q7_ABSMIN    ((q7_t)0)
 
 /* evaluate ARM DSP feature */
 #if (defined (__ARM_FEATURE_DSP) && (__ARM_FEATURE_DSP == 1))
@@ -453,8 +472,8 @@ extern "C"
    * @brief Macros required for reciprocal calculation in Normalized LMS
    */
 
-#define DELTA_Q31          (0x100)
-#define DELTA_Q15          0x5
+#define DELTA_Q31          ((q31_t)(0x100))
+#define DELTA_Q15          ((q15_t)0x5)
 #define INDEX_MASK         0x0000003F
 #ifndef PI
   #define PI               3.14159265358979f
@@ -616,7 +635,6 @@ extern "C"
 
 
 #endif
-
 
 #if defined(ARM_MATH_NEON) || defined(ARM_MATH_MVEF) /* floating point vector*/
   /**
@@ -891,7 +909,11 @@ __STATIC_FORCEINLINE q31_t read_q15x2 (
 {
   q31_t val;
 
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (&val, pQ15, 4);
+#else
+  val = (pQ15[1] << 16) | (pQ15[0] & 0x0FFFF) ;
+#endif
 
   return (val);
 }
@@ -906,10 +928,14 @@ __STATIC_FORCEINLINE q31_t read_q15x2_ia (
 {
   q31_t val;
 
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (&val, *pQ15, 4);
-  *pQ15 += 2;
+#else
+  val = ((*pQ15)[1] << 16) | ((*pQ15)[0] & 0x0FFFF);
+#endif
 
-  return (val);
+ *pQ15 += 2;
+ return (val);
 }
 
 /**
@@ -922,9 +948,13 @@ __STATIC_FORCEINLINE q31_t read_q15x2_da (
 {
   q31_t val;
 
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (&val, *pQ15, 4);
-  *pQ15 -= 2;
+#else
+  val = ((*pQ15)[1] << 16) | ((*pQ15)[0] & 0x0FFFF);
+#endif
 
+  *pQ15 -= 2;
   return (val);
 }
 
@@ -939,9 +969,14 @@ __STATIC_FORCEINLINE void write_q15x2_ia (
   q31_t    value)
 {
   q31_t val = value;
-
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (*pQ15, &val, 4);
-  *pQ15 += 2;
+#else
+  (*pQ15)[0] = (val & 0x0FFFF);
+  (*pQ15)[1] = (val >> 16) & 0x0FFFF;
+#endif
+
+ *pQ15 += 2;
 }
 
 /**
@@ -956,7 +991,12 @@ __STATIC_FORCEINLINE void write_q15x2 (
 {
   q31_t val = value;
 
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (pQ15, &val, 4);
+#else
+  pQ15[0] = val & 0x0FFFF;
+  pQ15[1] = val >> 16;
+#endif
 }
 
 
@@ -970,7 +1010,13 @@ __STATIC_FORCEINLINE q31_t read_q7x4_ia (
 {
   q31_t val;
 
+
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (&val, *pQ7, 4);
+#else
+  val =(((*pQ7)[3] & 0x0FF) << 24)  | (((*pQ7)[2] & 0x0FF) << 16)  | (((*pQ7)[1] & 0x0FF) << 8)  | ((*pQ7)[0] & 0x0FF);
+#endif 
+
   *pQ7 += 4;
 
   return (val);
@@ -985,8 +1031,11 @@ __STATIC_FORCEINLINE q31_t read_q7x4_da (
   q7_t ** pQ7)
 {
   q31_t val;
-
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (&val, *pQ7, 4);
+#else
+  val = ((((*pQ7)[3]) & 0x0FF) << 24) | ((((*pQ7)[2]) & 0x0FF) << 16)   | ((((*pQ7)[1]) & 0x0FF) << 8)  | ((*pQ7)[0] & 0x0FF);
+#endif 
   *pQ7 -= 4;
 
   return (val);
@@ -1003,8 +1052,15 @@ __STATIC_FORCEINLINE void write_q7x4_ia (
   q31_t   value)
 {
   q31_t val = value;
-
+#ifdef __ARM_FEATURE_UNALIGNED
   memcpy (*pQ7, &val, 4);
+#else
+  (*pQ7)[0] = val & 0x0FF;
+  (*pQ7)[1] = (val >> 8) & 0x0FF;
+  (*pQ7)[2] = (val >> 16) & 0x0FF;
+  (*pQ7)[3] = (val >> 24) & 0x0FF;
+
+#endif
   *pQ7 += 4;
 }
 
@@ -1350,7 +1406,7 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
         /*
          * 64-bit division
          */
-        result = num / den;
+        result = (q31_t) (num / den);
 
     return result;
 }
@@ -1904,6 +1960,16 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
     const float32_t *pCoeffs;      /**< Points to the array of coefficients.  The array is of length 5*numStages. */
   } arm_biquad_casd_df1_inst_f32;
 
+#if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
+  /**
+   * @brief Instance structure for the modified Biquad coefs required by vectorized code.
+   */
+  typedef struct
+  {
+      float32_t coeffs[8][4]; /**< Points to the array of modified coefficients.  The array is of length 32. There is one per stage */
+  } arm_biquad_mod_coef_f32;
+#endif 
+
   /**
    * @brief Processing function for the Q15 Biquad cascade filter.
    * @param[in]  S          points to an instance of the Q15 Biquad cascade structure.
@@ -2004,13 +2070,331 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
    * @param[in,out] S          points to an instance of the floating-point Biquad cascade structure.
    * @param[in]     numStages  number of 2nd order stages in the filter.
    * @param[in]     pCoeffs    points to the filter coefficients.
+   * @param[in]     pCoeffsMod points to the modified filter coefficients (only MVE version).
    * @param[in]     pState     points to the state buffer.
    */
+#if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
+  void arm_biquad_cascade_df1_mve_init_f32(
+      arm_biquad_casd_df1_inst_f32 * S,
+      uint8_t numStages,
+      const float32_t * pCoeffs, 
+      arm_biquad_mod_coef_f32 * pCoeffsMod, 
+      float32_t * pState);
+#endif
+  
   void arm_biquad_cascade_df1_init_f32(
         arm_biquad_casd_df1_inst_f32 * S,
         uint8_t numStages,
   const float32_t * pCoeffs,
         float32_t * pState);
+
+
+  /**
+   * @brief         Compute the logical bitwise AND of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_and_u16(
+    const uint16_t * pSrcA,
+    const uint16_t * pSrcB,
+          uint16_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise AND of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_and_u32(
+    const uint32_t * pSrcA,
+    const uint32_t * pSrcB,
+          uint32_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise AND of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_and_u8(
+    const uint8_t * pSrcA,
+    const uint8_t * pSrcB,
+          uint8_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise OR of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_or_u16(
+    const uint16_t * pSrcA,
+    const uint16_t * pSrcB,
+          uint16_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise OR of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_or_u32(
+    const uint32_t * pSrcA,
+    const uint32_t * pSrcB,
+          uint32_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise OR of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_or_u8(
+    const uint8_t * pSrcA,
+    const uint8_t * pSrcB,
+          uint8_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise NOT of a fixed-point vector.
+   * @param[in]     pSrc       points to input vector 
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_not_u16(
+    const uint16_t * pSrc,
+          uint16_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise NOT of a fixed-point vector.
+   * @param[in]     pSrc       points to input vector 
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_not_u32(
+    const uint32_t * pSrc,
+          uint32_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise NOT of a fixed-point vector.
+   * @param[in]     pSrc       points to input vector 
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_not_u8(
+    const uint8_t * pSrc,
+          uint8_t * pDst,
+          uint32_t blockSize);
+
+/**
+   * @brief         Compute the logical bitwise XOR of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_xor_u16(
+    const uint16_t * pSrcA,
+    const uint16_t * pSrcB,
+          uint16_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise XOR of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_xor_u32(
+    const uint32_t * pSrcA,
+    const uint32_t * pSrcB,
+          uint32_t * pDst,
+          uint32_t blockSize);
+
+  /**
+   * @brief         Compute the logical bitwise XOR of two fixed-point vectors.
+   * @param[in]     pSrcA      points to input vector A
+   * @param[in]     pSrcB      points to input vector B
+   * @param[out]    pDst       points to output vector
+   * @param[in]     blockSize  number of samples in each vector
+   * @return        none
+   */
+  void arm_xor_u8(
+    const uint8_t * pSrcA,
+    const uint8_t * pSrcB,
+          uint8_t * pDst,
+    uint32_t blockSize);
+
+  /**
+   * @brief Struct for specifying sorting algorithm
+   */
+  typedef enum
+  {
+    ARM_SORT_BITONIC   = 0,
+             /**< Bitonic sort   */
+    ARM_SORT_BUBBLE    = 1,
+             /**< Bubble sort    */
+    ARM_SORT_HEAP      = 2,
+             /**< Heap sort      */
+    ARM_SORT_INSERTION = 3,
+             /**< Insertion sort */
+    ARM_SORT_QUICK     = 4,
+             /**< Quick sort     */
+    ARM_SORT_SELECTION = 5
+             /**< Selection sort */
+  } arm_sort_alg;
+
+  /**
+   * @brief Struct for specifying sorting algorithm
+   */
+  typedef enum
+  {
+    ARM_SORT_DESCENDING = 0,
+             /**< Descending order (9 to 0) */
+    ARM_SORT_ASCENDING = 1
+             /**< Ascending order (0 to 9) */
+  } arm_sort_dir;
+
+  /**
+   * @brief Instance structure for the sorting algorithms.
+   */
+  typedef struct            
+  {
+    arm_sort_alg alg;        /**< Sorting algorithm selected */
+    arm_sort_dir dir;        /**< Sorting order (direction)  */
+  } arm_sort_instance_f32;  
+
+  /**
+   * @param[in]  S          points to an instance of the sorting structure.
+   * @param[in]  pSrc       points to the block of input data.
+   * @param[out] pDst       points to the block of output data.
+   * @param[in]  blockSize  number of samples to process.
+   */
+  void arm_sort_f32(
+    const arm_sort_instance_f32 * S, 
+          float32_t * pSrc, 
+          float32_t * pDst, 
+          uint32_t blockSize);
+
+  /**
+   * @param[in,out]  S            points to an instance of the sorting structure.
+   * @param[in]      alg          Selected algorithm.
+   * @param[in]      dir          Sorting order.
+   */
+  void arm_sort_init_f32(
+    arm_sort_instance_f32 * S, 
+    arm_sort_alg alg, 
+    arm_sort_dir dir); 
+
+  /**
+   * @brief Instance structure for the sorting algorithms.
+   */
+  typedef struct            
+  {
+    arm_sort_dir dir;        /**< Sorting order (direction)  */
+    float32_t * buffer;      /**< Working buffer */
+  } arm_merge_sort_instance_f32;  
+
+  /**
+   * @param[in]      S          points to an instance of the sorting structure.
+   * @param[in,out]  pSrc       points to the block of input data.
+   * @param[out]     pDst       points to the block of output data
+   * @param[in]      blockSize  number of samples to process.
+   */
+  void arm_merge_sort_f32(
+    const arm_merge_sort_instance_f32 * S,
+          float32_t *pSrc,
+          float32_t *pDst,
+          uint32_t blockSize);
+
+  /**
+   * @param[in,out]  S            points to an instance of the sorting structure.
+   * @param[in]      dir          Sorting order.
+   * @param[in]      buffer       Working buffer.
+   */
+  void arm_merge_sort_init_f32(
+    arm_merge_sort_instance_f32 * S,
+    arm_sort_dir dir,
+    float32_t * buffer);
+
+  /**
+   * @brief Struct for specifying cubic spline type
+   */
+  typedef enum
+  {
+    ARM_SPLINE_NATURAL = 0,           /**< Natural spline */
+    ARM_SPLINE_PARABOLIC_RUNOUT = 1   /**< Parabolic runout spline */
+  } arm_spline_type;
+
+  /**
+   * @brief Instance structure for the floating-point cubic spline interpolation.
+   */
+  typedef struct
+  {
+    arm_spline_type type;      /**< Type (boundary conditions) */
+    const float32_t * x;       /**< x values */
+    const float32_t * y;       /**< y values */
+    uint32_t n_x;              /**< Number of known data points */
+    float32_t * coeffs;        /**< Coefficients buffer (b,c, and d) */
+  } arm_spline_instance_f32;
+
+  /**
+   * @brief Processing function for the floating-point cubic spline interpolation.
+   * @param[in]  S          points to an instance of the floating-point spline structure.
+   * @param[in]  xq         points to the x values ot the interpolated data points.
+   * @param[out] pDst       points to the block of output data.
+   * @param[in]  blockSize  number of samples of output data.
+   */
+  void arm_spline_f32(
+        arm_spline_instance_f32 * S, 
+  const float32_t * xq,
+        float32_t * pDst,
+        uint32_t blockSize);
+
+  /**
+   * @brief Initialization function for the floating-point cubic spline interpolation.
+   * @param[in,out] S        points to an instance of the floating-point spline structure.
+   * @param[in]     type     type of cubic spline interpolation (boundary conditions)
+   * @param[in]     x        points to the x values of the known data points.
+   * @param[in]     y        points to the y values of the known data points.
+   * @param[in]     n        number of known data points.
+   * @param[in]     coeffs   coefficients array for b, c, and d
+   * @param[in]     tempBuffer   buffer array for internal computations
+   */
+  void arm_spline_init_f32(
+          arm_spline_instance_f32 * S,
+          arm_spline_type type,
+    const float32_t * x,
+    const float32_t * y,
+          uint32_t n, 
+          float32_t * coeffs,
+          float32_t * tempBuffer);
 
   /**
    * @brief Instance structure for the floating-point matrix structure.
@@ -2021,9 +2405,8 @@ __STATIC_INLINE q31_t arm_div_q63_to_q31(q63_t num, q31_t den)
     uint16_t numCols;     /**< number of columns of the matrix.  */
     float32_t *pData;     /**< points to the data of the matrix. */
   } arm_matrix_instance_f32;
-
-
-  /**
+ 
+ /**
    * @brief Instance structure for the floating-point matrix structure.
    */
   typedef struct
@@ -2735,7 +3118,19 @@ void arm_mat_init_f32(
     const q15_t *pTwiddle;             /**< points to the Twiddle factor table. */
     const uint16_t *pBitRevTable;      /**< points to the bit reversal table. */
           uint16_t bitRevLength;             /**< bit reversal table length. */
+#if defined(ARM_MATH_MVEI)
+   const uint32_t *rearranged_twiddle_tab_stride1_arr;        /**< Per stage reordered twiddle pointer (offset 1) */                                                       \
+   const uint32_t *rearranged_twiddle_tab_stride2_arr;        /**< Per stage reordered twiddle pointer (offset 2) */                                                       \
+   const uint32_t *rearranged_twiddle_tab_stride3_arr;        /**< Per stage reordered twiddle pointer (offset 3) */                                                       \
+   const q15_t *rearranged_twiddle_stride1; /**< reordered twiddle offset 1 storage */                                                                   \
+   const q15_t *rearranged_twiddle_stride2; /**< reordered twiddle offset 2 storage */                                                                   \
+   const q15_t *rearranged_twiddle_stride3;
+#endif
   } arm_cfft_instance_q15;
+
+arm_status arm_cfft_init_q15(
+  arm_cfft_instance_q15 * S,
+  uint16_t fftLen);
 
 void arm_cfft_q15(
     const arm_cfft_instance_q15 * S,
@@ -2752,7 +3147,19 @@ void arm_cfft_q15(
     const q31_t *pTwiddle;             /**< points to the Twiddle factor table. */
     const uint16_t *pBitRevTable;      /**< points to the bit reversal table. */
           uint16_t bitRevLength;             /**< bit reversal table length. */
+#if defined(ARM_MATH_MVEI)
+   const uint32_t *rearranged_twiddle_tab_stride1_arr;        /**< Per stage reordered twiddle pointer (offset 1) */                                                       \
+   const uint32_t *rearranged_twiddle_tab_stride2_arr;        /**< Per stage reordered twiddle pointer (offset 2) */                                                       \
+   const uint32_t *rearranged_twiddle_tab_stride3_arr;        /**< Per stage reordered twiddle pointer (offset 3) */                                                       \
+   const q31_t *rearranged_twiddle_stride1; /**< reordered twiddle offset 1 storage */                                                                   \
+   const q31_t *rearranged_twiddle_stride2; /**< reordered twiddle offset 2 storage */                                                                   \
+   const q31_t *rearranged_twiddle_stride3;
+#endif
   } arm_cfft_instance_q31;
+
+arm_status arm_cfft_init_q31(
+  arm_cfft_instance_q31 * S,
+  uint16_t fftLen);
 
 void arm_cfft_q31(
     const arm_cfft_instance_q31 * S,
@@ -2769,11 +3176,42 @@ void arm_cfft_q31(
     const float32_t *pTwiddle;         /**< points to the Twiddle factor table. */
     const uint16_t *pBitRevTable;      /**< points to the bit reversal table. */
           uint16_t bitRevLength;             /**< bit reversal table length. */
+#if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
+   const uint32_t *rearranged_twiddle_tab_stride1_arr;        /**< Per stage reordered twiddle pointer (offset 1) */                                                       \
+   const uint32_t *rearranged_twiddle_tab_stride2_arr;        /**< Per stage reordered twiddle pointer (offset 2) */                                                       \
+   const uint32_t *rearranged_twiddle_tab_stride3_arr;        /**< Per stage reordered twiddle pointer (offset 3) */                                                       \
+   const float32_t *rearranged_twiddle_stride1; /**< reordered twiddle offset 1 storage */                                                                   \
+   const float32_t *rearranged_twiddle_stride2; /**< reordered twiddle offset 2 storage */                                                                   \
+   const float32_t *rearranged_twiddle_stride3;
+#endif
   } arm_cfft_instance_f32;
+
+
+  arm_status arm_cfft_init_f32(
+  arm_cfft_instance_f32 * S,
+  uint16_t fftLen);
 
   void arm_cfft_f32(
   const arm_cfft_instance_f32 * S,
         float32_t * p1,
+        uint8_t ifftFlag,
+        uint8_t bitReverseFlag);
+
+
+  /**
+   * @brief Instance structure for the Double Precision Floating-point CFFT/CIFFT function.
+   */
+  typedef struct
+  {
+          uint16_t fftLen;                   /**< length of the FFT. */
+    const float64_t *pTwiddle;         /**< points to the Twiddle factor table. */
+    const uint16_t *pBitRevTable;      /**< points to the bit reversal table. */
+          uint16_t bitRevLength;             /**< bit reversal table length. */
+  } arm_cfft_instance_f64;
+
+  void arm_cfft_f64(
+  const arm_cfft_instance_f64 * S,
+        float64_t * p1,
         uint8_t ifftFlag,
         uint8_t bitReverseFlag);
 
@@ -2788,7 +3226,11 @@ void arm_cfft_q31(
           uint32_t twidCoefRModifier;               /**< twiddle coefficient modifier that supports different size FFTs with the same twiddle factor table. */
     const q15_t *pTwiddleAReal;                     /**< points to the real twiddle factor table. */
     const q15_t *pTwiddleBReal;                     /**< points to the imag twiddle factor table. */
+#if defined(ARM_MATH_MVEI)
+    arm_cfft_instance_q15 cfftInst;
+#else
     const arm_cfft_instance_q15 *pCfft;       /**< points to the complex FFT instance. */
+#endif
   } arm_rfft_instance_q15;
 
   arm_status arm_rfft_init_q15(
@@ -2813,7 +3255,11 @@ void arm_cfft_q31(
           uint32_t twidCoefRModifier;                 /**< twiddle coefficient modifier that supports different size FFTs with the same twiddle factor table. */
     const q31_t *pTwiddleAReal;                       /**< points to the real twiddle factor table. */
     const q31_t *pTwiddleBReal;                       /**< points to the imag twiddle factor table. */
+#if defined(ARM_MATH_MVEI)
+    arm_cfft_instance_q31 cfftInst;
+#else
     const arm_cfft_instance_q31 *pCfft;         /**< points to the complex FFT instance. */
+#endif
   } arm_rfft_instance_q31;
 
   arm_status arm_rfft_init_q31(
@@ -2855,6 +3301,27 @@ void arm_cfft_q31(
         float32_t * pDst);
 
   /**
+   * @brief Instance structure for the Double Precision Floating-point RFFT/RIFFT function.
+   */
+typedef struct
+  {
+          arm_cfft_instance_f64 Sint;      /**< Internal CFFT structure. */
+          uint16_t fftLenRFFT;             /**< length of the real sequence */
+    const float64_t * pTwiddleRFFT;        /**< Twiddle factors real stage  */
+  } arm_rfft_fast_instance_f64 ;
+
+arm_status arm_rfft_fast_init_f64 (
+         arm_rfft_fast_instance_f64 * S,
+         uint16_t fftLen);
+
+
+void arm_rfft_fast_f64(
+    arm_rfft_fast_instance_f64 * S,
+    float64_t * p, float64_t * pOut,
+    uint8_t ifftFlag);
+
+
+  /**
    * @brief Instance structure for the floating-point RFFT/RIFFT function.
    */
 typedef struct
@@ -2868,25 +3335,9 @@ arm_status arm_rfft_fast_init_f32 (
          arm_rfft_fast_instance_f32 * S,
          uint16_t fftLen);
 
-arm_status arm_rfft_32_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_64_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_128_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_256_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_512_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_1024_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_2048_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
-arm_status arm_rfft_4096_fast_init_f32 ( arm_rfft_fast_instance_f32 * S );
-
 
   void arm_rfft_fast_f32(
-        arm_rfft_fast_instance_f32 * S,
+        const arm_rfft_fast_instance_f32 * S,
         float32_t * p, float32_t * pOut,
         uint8_t ifftFlag);
 
@@ -4225,7 +4676,7 @@ arm_status arm_fir_decimate_init_f32(
    */
   void arm_biquad_cas_df1_32x64_q31(
   const arm_biquad_cas_df1_32x64_ins_q31 * S,
-        q31_t * pSrc,
+  const q31_t * pSrc,
         q31_t * pDst,
         uint32_t blockSize);
 
@@ -4272,7 +4723,7 @@ arm_status arm_fir_decimate_init_f32(
   {
           uint8_t numStages;         /**< number of 2nd order stages in the filter.  Overall order is 2*numStages. */
           float64_t *pState;         /**< points to the array of state coefficients.  The array is of length 2*numStages. */
-          float64_t *pCoeffs;        /**< points to the array of coefficients.  The array is of length 5*numStages. */
+    const float64_t *pCoeffs;        /**< points to the array of coefficients.  The array is of length 5*numStages. */
   } arm_biquad_cascade_df2T_instance_f64;
 
 
@@ -4313,7 +4764,7 @@ arm_status arm_fir_decimate_init_f32(
    */
   void arm_biquad_cascade_df2T_f64(
   const arm_biquad_cascade_df2T_instance_f64 * S,
-        float64_t * pSrc,
+  const float64_t * pSrc,
         float64_t * pDst,
         uint32_t blockSize);
 
@@ -4362,7 +4813,7 @@ void arm_biquad_cascade_df2T_compute_coefs_f32(
   void arm_biquad_cascade_df2T_init_f64(
         arm_biquad_cascade_df2T_instance_f64 * S,
         uint8_t numStages,
-        float64_t * pCoeffs,
+        const float64_t * pCoeffs,
         float64_t * pState);
 
 
@@ -5548,7 +5999,7 @@ __STATIC_FORCEINLINE q15_t arm_pid_q15(
     acc += (q31_t) S->state[2] << 15;
 
     /* saturate the output */
-    out = (q15_t) (__SSAT((acc >> 15), 16));
+    out = (q15_t) (__SSAT((q31_t)(acc >> 15), 16));
 
     /* Update state */
     S->state[1] = S->state[0];
@@ -7398,9 +7849,8 @@ arm_status arm_sqrt_q15(
         q15_t * pDst,
         uint32_t blockSize);
 
-  /**
+/**
  * @brief Struct for specifying SVM Kernel
- *
  */
 typedef enum
 {
@@ -7413,7 +7863,6 @@ typedef enum
     ARM_ML_KERNEL_SIGMOID = 3
              /**< Sigmoid kernel */
 } arm_ml_kernel_type;
-
 
 
 /**
@@ -7717,6 +8166,19 @@ float32_t arm_entropy_f32(const float32_t * pSrcA,uint32_t blockSize);
 
 
 /**
+ * @brief Entropy
+ *
+ * @param[in]  pSrcA        Array of input values.
+ * @param[in]  blockSize    Number of samples in the input array.
+ * @return     Entropy      -Sum(p ln p)
+ *
+ */
+
+
+float64_t arm_entropy_f64(const float64_t * pSrcA, uint32_t blockSize);
+
+
+/**
  * @brief Kullback-Leibler
  *
  * @param[in]  pSrcA         Pointer to an array of input values for probability distribution A.
@@ -7728,6 +8190,20 @@ float32_t arm_entropy_f32(const float32_t * pSrcA,uint32_t blockSize);
 float32_t arm_kullback_leibler_f32(const float32_t * pSrcA
   ,const float32_t * pSrcB
   ,uint32_t blockSize);
+
+
+/**
+ * @brief Kullback-Leibler
+ *
+ * @param[in]  pSrcA         Pointer to an array of input values for probability distribution A.
+ * @param[in]  pSrcB         Pointer to an array of input values for probability distribution B.
+ * @param[in]  blockSize     Number of samples in the input array.
+ * @return Kullback-Leibler  Divergence D(A || B)
+ *
+ */
+float64_t arm_kullback_leibler_f64(const float64_t * pSrcA, 
+                const float64_t * pSrcB, 
+                uint32_t blockSize);
 
 
 /**
@@ -8080,13 +8556,13 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (xIndex < 0 || xIndex > (S->numRows - 1) || yIndex < 0 || yIndex > (S->numCols - 1))
+    if (xIndex < 0 || xIndex > (S->numCols - 2) || yIndex < 0 || yIndex > (S->numRows - 2))
     {
       return (0);
     }
 
     /* Calculation of index for two nearest points in X-direction */
-    index = (xIndex - 1) + (yIndex - 1) * S->numCols;
+    index = (xIndex ) + (yIndex ) * S->numCols;
 
 
     /* Read two nearest points in X-direction */
@@ -8094,7 +8570,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
     f01 = pData[index + 1];
 
     /* Calculation of index for two nearest points in Y-direction */
-    index = (xIndex - 1) + (yIndex) * S->numCols;
+    index = (xIndex ) + (yIndex+1) * S->numCols;
 
 
     /* Read two nearest points in Y-direction */
@@ -8153,7 +8629,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+    if (rI < 0 || rI > (S->numCols - 2) || cI < 0 || cI > (S->numRows - 2))
     {
       return (0);
     }
@@ -8227,7 +8703,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+    if (rI < 0 || rI > (S->numCols - 2) || cI < 0 || cI > (S->numRows - 2))
     {
       return (0);
     }
@@ -8252,15 +8728,15 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* x1 is in 1.15(q15), xfract in 12.20 format and out is in 13.35 format */
     /* convert 13.35 to 13.31 by right shifting  and out is in 1.31 */
-    out = (q31_t) (((q63_t) x1 * (0xFFFFF - xfract)) >> 4U);
-    acc = ((q63_t) out * (0xFFFFF - yfract));
+    out = (q31_t) (((q63_t) x1 * (0x0FFFFF - xfract)) >> 4U);
+    acc = ((q63_t) out * (0x0FFFFF - yfract));
 
     /* x2 * (xfract) * (1-yfract)  in 1.51 and adding to acc */
-    out = (q31_t) (((q63_t) x2 * (0xFFFFF - yfract)) >> 4U);
+    out = (q31_t) (((q63_t) x2 * (0x0FFFFF - yfract)) >> 4U);
     acc += ((q63_t) out * (xfract));
 
     /* y1 * (1 - xfract) * (yfract)  in 1.51 and adding to acc */
-    out = (q31_t) (((q63_t) y1 * (0xFFFFF - xfract)) >> 4U);
+    out = (q31_t) (((q63_t) y1 * (0x0FFFFF - xfract)) >> 4U);
     acc += ((q63_t) out * (yfract));
 
     /* y2 * (xfract) * (yfract)  in 1.51 and adding to acc */
@@ -8305,7 +8781,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     /* Care taken for table outside boundary */
     /* Returns zero output when values are outside table boundary */
-    if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+    if (rI < 0 || rI > (S->numCols - 2) || cI < 0 || cI > (S->numRows - 2))
     {
       return (0);
     }

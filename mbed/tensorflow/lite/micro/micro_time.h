@@ -1,4 +1,4 @@
-/* Copyright 2018 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2020 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -12,17 +12,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-#ifndef TENSORFLOW_LITE_MICRO_DEBUG_LOG_NUMBERS_H_
-#define TENSORFLOW_LITE_MICRO_DEBUG_LOG_NUMBERS_H_
+#ifndef TENSORFLOW_LITE_MICRO_MICRO_TIME_H_
+#define TENSORFLOW_LITE_MICRO_MICRO_TIME_H_
 
-#include <cstdint>
+#include <stdint.h>
 
-// Output numbers to the debug logging stream.
-extern "C" {
-void DebugLogInt32(int32_t i);
-void DebugLogUInt32(uint32_t i);
-void DebugLogHex(uint32_t i);
-void DebugLogFloat(float i);
-}
+namespace tflite {
 
-#endif  // TENSORFLOW_LITE_MICRO_DEBUG_LOG_NUMBERS_H_
+// These functions should be implemented by each target platform, and provide an
+// accurate tick count along with how many ticks there are per second.
+int32_t ticks_per_second();
+
+// Return time in ticks.  The meaning of a tick varies per platform.
+int32_t GetCurrentTimeTicks();
+
+}  // namespace tflite
+
+#endif  // TENSORFLOW_LITE_MICRO_MICRO_TIME_H_
