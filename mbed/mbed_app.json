@@ -6,6 +6,7 @@
     },
     "requires": ["bare-metal"]
     ,"macros": [
+        "NDEBUG",
         "TF_LITE_STATIC_MEMORY"
     ]
 }
